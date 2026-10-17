@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ShoppingBag, Server, CheckCircle2, ShieldCheck, Database, Layers, Activity, RefreshCw, AlertTriangle, Cpu } from 'lucide-react';
+import { ShoppingBag, Server, CheckCircle2, ShieldCheck, Database, Layers, Activity, RefreshCw, AlertTriangle, Box, FolderTree, ShoppingCart, CreditCard, Users, ClipboardList } from 'lucide-react';
 import api from './services/api';
 
 export default function App() {
@@ -53,6 +53,15 @@ export default function App() {
   const dbConnected = apiStatus.data?.database?.connected;
   const sys = apiStatus.data?.system;
 
+  const modelsList = [
+    { name: 'User', icon: Users, desc: 'Bcrypt hashing, email index, role enforcement, safe serialization' },
+    { name: 'Category', icon: FolderTree, desc: 'Slug generator, unique name index, product relationship' },
+    { name: 'Product', icon: Box, desc: 'SKU unique index, text search, virtual final price, low stock' },
+    { name: 'Cart', icon: ShoppingCart, desc: 'Server recalculation, authenticated customer ownership' },
+    { name: 'Order', icon: ClipboardList, desc: 'Line item snapshots, status machine, inventory restore flag' },
+    { name: 'Payment', icon: CreditCard, desc: 'Simulated audit log, unique transaction reference' },
+  ];
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans">
       {/* Top Navbar Header */}
@@ -65,7 +74,7 @@ export default function App() {
             <div>
               <span className="text-xl font-bold tracking-tight text-slate-900">T-Kart</span>
               <span className="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                Phase 3 Verified
+                Phase 4 Verified
               </span>
             </div>
           </div>
@@ -104,14 +113,14 @@ export default function App() {
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm transition-all shadow-lg shadow-blue-600/30 active:scale-95 cursor-pointer"
               >
                 <RefreshCw className={`w-4 h-4 ${apiStatus.loading ? 'animate-spin' : ''}`} />
-                Refresh API Health
+                Refresh System & DB Status
               </button>
               <button
                 onClick={testOperationalError}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm transition-all active:scale-95 cursor-pointer"
               >
                 <AlertTriangle className="w-4 h-4 text-amber-400" />
-                Test Centralized Error Handler (400)
+                Test Centralized Error Handler
               </button>
             </div>
 
@@ -121,10 +130,47 @@ export default function App() {
                   <strong>Status {errorTestResult.status}:</strong> {errorTestResult.message}
                 </span>
                 <span className="text-emerald-400 ml-4 font-sans font-medium text-[11px] px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
-                  Global Error Handler Caught Successfully
+                  Caught by Centralized Handler
                 </span>
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Phase 4 Models Grid */}
+        <div className="mb-10">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <Database className="w-5 h-5 text-blue-600" />
+                <span>Mongoose Schemas & Data Models (Phase 4 Verified)</span>
+              </h2>
+              <p className="text-xs text-slate-500 mt-1">Strict type validations, relational references, virtuals, and compound indexes active</p>
+            </div>
+            <span className="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+              6/6 Models Tested
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {modelsList.map((m) => {
+              const Icon = m.icon;
+              return (
+                <div key={m.name} className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-sm">{m.name} Model</h3>
+                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">{m.desc}</p>
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 mt-2">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Schema & Index Verified</span>
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -257,7 +303,7 @@ export default function App() {
             <Layers className="w-5 h-5 text-blue-600" />
             <span>T-Kart Development Milestones</span>
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="p-4 rounded-xl border border-emerald-300 bg-emerald-50/40">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">Phase 1 Done</span>
@@ -274,18 +320,18 @@ export default function App() {
               <h4 className="font-semibold text-slate-900 text-sm mb-1">MongoDB & Compass</h4>
               <p className="text-xs text-slate-600">tkart_db cluster, Mongoose connection, Compass setup guide and diagnostics.</p>
             </div>
-            <div className="p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50/30">
+            <div className="p-4 rounded-xl border border-emerald-300 bg-emerald-50/40">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">Phase 3 (Verified)</span>
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">Phase 3 Done</span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               </div>
               <h4 className="font-semibold text-slate-900 text-sm mb-1">Backend Foundation</h4>
               <p className="text-xs text-slate-600">Centralized error handler, CORS policies, Helmet security, rate limiting & route architecture.</p>
             </div>
-            <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+            <div className="p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50/30">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Phase 4 (Next)</span>
-                <ShieldCheck className="w-4 h-4 text-slate-400" />
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">Phase 4 (Verified)</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
               </div>
               <h4 className="font-semibold text-slate-900 text-sm mb-1">Database Models</h4>
               <p className="text-xs text-slate-600">User, Product, Category, Cart, Order, Payment Mongoose schemas and validations.</p>

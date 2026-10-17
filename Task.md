@@ -485,13 +485,13 @@ work is verified.
 
 ### Phase 4 --- Database models
 
--   [ ] User model.
--   [ ] Product model.
--   [ ] Category model.
--   [ ] Cart model.
--   [ ] Order model.
--   [ ] Payment model.
--   [ ] Add required validation and indexes.
+-   [x] User model.
+-   [x] Product model.
+-   [x] Category model.
+-   [x] Cart model.
+-   [x] Order model.
+-   [x] Payment model.
+-   [x] Add required validation and indexes.
 
 ### Phase 5 --- Authentication and authorization
 
