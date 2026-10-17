@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { isValidExternalImageUrl } from '../utils/imageUrl.js';
 
 const productSchema = new mongoose.Schema(
   {
@@ -33,7 +34,11 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 0,
       min: [0, 'Discount percentage cannot be negative'],
-      max: [100, 'Discount percentage cannot exceed 100%'],
+      max: [90, 'Discount percentage cannot exceed 90%'],
+      enum: {
+        values: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90],
+        message: 'Discount must be 0% or a multiple of 10% up to 90%',
+      },
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
@@ -47,17 +52,41 @@ const productSchema = new mongoose.Schema(
       min: [0, 'Stock cannot be negative'],
       default: 0,
     },
+    image: {
+      type: String,
+      trim: true,
+      validate: {
+        validator: (value) => !value || isValidExternalImageUrl(value),
+        message: 'Product image must be an external HTTPS URL',
+      },
+    },
     images: {
       type: [String],
       validate: {
         validator: function (v) {
-          return Array.isArray(v) && v.length > 0;
+          return Array.isArray(v) && v.length > 0 && v.every(isValidExternalImageUrl);
         },
-        message: 'Product must have at least one image URL',
+        message: 'Product must have one or more external HTTPS image URLs',
       },
-      default: [
-        'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80',
-      ],
+      default: [],
+    },
+    imageSource: {
+      type: String,
+      trim: true,
+      default: 'manual',
+    },
+    imageCredit: { type: String, trim: true, default: '' },
+    imageCreditUrl: {
+      type: String,
+      trim: true,
+      default: '',
+      validate: { validator: (value) => !value || isValidExternalImageUrl(value), message: 'Image credit must be an external HTTPS URL' },
+    },
+    imageSourceUrl: {
+      type: String,
+      trim: true,
+      default: '',
+      validate: { validator: (value) => !value || isValidExternalImageUrl(value), message: 'Image source must be an external HTTPS URL' },
     },
     isActive: {
       type: Boolean,
@@ -83,6 +112,16 @@ const productSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+productSchema.pre('validate', function syncPrimaryImage() {
+  if (this.image) {
+    const primary = this.image.trim();
+    this.image = primary;
+    this.images = [primary, ...(this.images || []).filter((url) => url !== primary)];
+  } else if (this.images?.length) {
+    this.image = this.images[0];
+  }
+});
 
 // Virtual: Server-calculated final price after discount
 productSchema.virtual('finalPrice').get(function () {

@@ -22,3 +22,61 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
+html[data-theme='dark'] body {
+  background-color: #0f172a;
+  color: #e2e8f0;
+}
+
+html[data-theme='dark'] [class~='bg-white'],
+html[data-theme='dark'] [class~='bg-slate-50'],
+html[data-theme='dark'] [class~='bg-slate-100'],
+html[data-theme='dark'] [class~='bg-slate-200'],
+html[data-theme='dark'] [class~='bg-emerald-50'],
+html[data-theme='dark'] [class~='bg-emerald-100'],
+html[data-theme='dark'] [class~='bg-rose-50'],
+html[data-theme='dark'] [class~='bg-amber-50'],
+html[data-theme='dark'] [class~='bg-blue-50'],
+html[data-theme='dark'] [class*='bg-[#f'],
+html[data-theme='dark'] [class*='bg-[#e'] {
+  background-color: #1e293b !important;
+}
+
+html[data-theme='dark'] [class~='text-slate-900'],
+html[data-theme='dark'] [class~='text-slate-800'],
+html[data-theme='dark'] [class~='text-slate-700'] {
+  color: #e2e8f0 !important;
+}
+
+html[data-theme='dark'] [class~='text-slate-600'],
+html[data-theme='dark'] [class~='text-slate-500'] {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme='dark'] [class~='text-slate-400'] {
+  color: #94a3b8 !important;
+}
+
+html[data-theme='dark'] [class~='text-emerald-800'],
+html[data-theme='dark'] [class~='text-emerald-700'],
+html[data-theme='dark'] [class~='text-emerald-900'] {
+  color: #6ee7b7 !important;
+}
+
+html[data-theme='dark'] [class~='border-slate-100'],
+html[data-theme='dark'] [class~='border-slate-200'],
+html[data-theme='dark'] [class~='border-slate-300'],
+html[data-theme='dark'] [class~='divide-slate-100'] > :not(:last-child) {
+  border-color: #334155 !important;
+}
+
+html[data-theme='dark'] input,
+html[data-theme='dark'] textarea,
+html[data-theme='dark'] select {
+  color: #e2e8f0;
+}
+
+html[data-theme='dark'] input::placeholder,
+html[data-theme='dark'] textarea::placeholder {
+  color: #94a3b8;
+}

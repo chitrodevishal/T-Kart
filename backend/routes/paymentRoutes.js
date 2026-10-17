@@ -1,17 +1,16 @@
 import express from 'express';
+import { protect } from '../middleware/authMiddleware.js';
+import { processMockPayment, getPaymentByOrderId } from '../controllers/paymentController.js';
 
 const router = express.Router();
 
 /**
- * Payment Routes Placeholder (Full implementation in Phase 8)
+ * Simulated payment routes
  * POST /api/payments/mock
  * GET  /api/payments/:orderId
  */
-router.get('/:orderId', (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Payment module active. Implementation arriving in Phase 8.',
-  });
-});
+router.use(protect);
+router.post('/mock', processMockPayment);
+router.get('/:orderId', getPaymentByOrderId);
 
 export default router;

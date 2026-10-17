@@ -1,142 +1,95 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import assert from 'node:assert/strict';
 import mongoose from 'mongoose';
+import { randomUUID } from 'node:crypto';
+import { configureDnsServers } from '../config/dns.js';
 import { User, Category, Product, Cart, Order, Payment } from '../models/index.js';
 
 async function runModelVerification() {
-  console.log('--- Starting T-Kart Mongoose Models Verification ---');
   const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/tkart_db';
+  const suffix = randomUUID().replaceAll('-', '');
+  const categoryName = `Model Check ${suffix.slice(0, 8)}`;
+  const records = { payment: null, order: null, cart: null, product: null, category: null, user: null };
 
+  configureDnsServers();
   await mongoose.connect(uri);
-  console.log(' Connected to MongoDB:', mongoose.connection.name);
+  console.log('--- Verifying T-Kart Mongoose models ---');
+  console.log('Connected to MongoDB:', mongoose.connection.name);
 
-  // 1. Clean previous test artifacts if any
-  await User.deleteMany({ email: 'test_model_check@tkart.com' });
-  await Category.deleteMany({ slug: 'test-electronics' });
-  await Product.deleteMany({ sku: 'TEST-SKU-001' });
-
-  // 2. Test User Model & Password Hashing
-  console.log('\n[1/6] Testing User Model & Bcrypt Hashing...');
-  const testUser = await User.create({
-    name: 'Model Test User',
-    email: 'test_model_check@tkart.com',
-    password: 'SecurePassword123!',
-    phone: '9876543210',
-    role: 'customer',
-  });
-  console.log('  User created with ID:', testUser._id);
-  console.log('  Password field in toJSON:', testUser.toJSON().password ? 'EXPOSED (BUG!)' : 'HIDDEN (CORRECT)');
-  
-  const isPassValid = await testUser.comparePassword('SecurePassword123!');
-  console.log('  Password compare valid:', isPassValid ? 'MATCHES (CORRECT)' : 'FAILED (BUG!)');
-
-  // 3. Test Category Model & Slug Hook
-  console.log('\n[2/6] Testing Category Model & Slug Generator...');
-  const testCategory = await Category.create({
-    name: 'Test Electronics',
-    description: 'Gadgets and audio electronics for testing',
-  });
-  console.log('  Category created:', testCategory.name);
-  console.log('  Auto-generated Slug:', testCategory.slug, testCategory.slug === 'test-electronics' ? '(CORRECT)' : '(FAIL)');
-
-  // 4. Test Product Model & Virtuals
-  console.log('\n[3/6] Testing Product Model & Virtual Prices...');
-  const testProduct = await Product.create({
-    name: 'T-Kart Noise Cancelling Headphones',
-    description: 'High-fidelity Bluetooth wireless headphones with active noise cancellation',
-    sku: 'TEST-SKU-001',
-    price: 5000,
-    discount: 20, // 20% discount -> expected finalPrice: 4000
-    category: testCategory._id,
-    stock: 4, // Expected low stock: true
-    images: ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e'],
-  });
-  console.log('  Product created:', testProduct.name);
-  console.log('  Original Price: ₹' + testProduct.price);
-  console.log('  Virtual Final Price: ₹' + testProduct.finalPrice, testProduct.finalPrice === 4000 ? '(CORRECT)' : '(FAIL)');
-  console.log('  Low stock virtual:', testProduct.isLowStock ? 'YES (CORRECT, stock=4)' : 'NO (FAIL)');
-
-  // 5. Test Cart Model & Server Recalculation
-  console.log('\n[4/6] Testing Cart Model & Server Pricing Calculations...');
-  const testCart = await Cart.create({
-    user: testUser._id,
-    items: [{ product: testProduct._id, quantity: 2 }],
-  });
-  await testCart.recalculateTotals();
-  await testCart.save();
-  console.log('  Cart Subtotal: ₹' + testCart.subtotal);
-  console.log('  Cart Total (after discount): ₹' + testCart.total, testCart.total === 8000 ? '(CORRECT, 4000*2)' : '(FAIL)');
-
-  // 6. Test Order Model & Line Snapshots
-  console.log('\n[5/6] Testing Order Model & Product Snapshots...');
-  const testOrder = await Order.create({
-    orderNumber: `TK-${Date.now()}-TEST`,
-    user: testUser._id,
-    orderItems: [
-      {
-        product: testProduct._id,
-        name: testProduct.name,
-        sku: testProduct.sku,
-        price: testProduct.price,
-        discount: testProduct.discount,
-        finalPrice: testProduct.finalPrice,
-        quantity: 2,
-        image: testProduct.images[0],
-      },
-    ],
-    shippingAddress: {
-      fullName: 'Model Test User',
+  try {
+    records.user = await User.create({
+      name: 'Model Check User',
+      email: `model-check-${suffix}@example.invalid`,
+      password: 'SecurePassword123!',
       phone: '9876543210',
-      address: '123 Tech Park',
-      city: 'Bengaluru',
-      state: 'Karnataka',
-      postalCode: '560001',
-    },
-    itemsTotal: 8000,
-    shippingFee: 0,
-    tax: 0,
-    totalAmount: 8000,
-    orderStatus: 'placed',
-  });
-  console.log('  Order created:', testOrder.orderNumber);
-  console.log('  Snapshot item SKU:', testOrder.orderItems[0].sku);
-  console.log('  Order status:', testOrder.orderStatus);
+      role: 'customer',
+    });
+    assert.equal(records.user.toJSON().password, undefined, 'serialized users must not expose passwords');
+    assert.equal(await records.user.comparePassword('SecurePassword123!'), true, 'password hashing must be reversible through comparison');
+    console.log('User hashing and safe serialization: passed');
 
-  // 7. Test Payment Model
-  console.log('\n[6/6] Testing Payment Model...');
-  const testPayment = await Payment.create({
-    order: testOrder._id,
-    user: testUser._id,
-    transactionId: `TXN_SIM_${Date.now()}`,
-    amount: 8000,
-    currency: 'INR',
-    status: 'success',
-    gatewayResponse: {
-      simulatedCode: 'SIM_SUCCESS',
-      message: 'Demo card payment approved',
-      simulatedCardLast4: '4242',
-    },
-  });
-  console.log('  Payment record created:', testPayment.transactionId);
-  console.log('  Payment status:', testPayment.status);
+    records.category = await Category.create({ name: categoryName, description: 'Temporary model verification category' });
+    assert.equal(records.category.slug, categoryName.toLowerCase().replaceAll(' ', '-'), 'category slug hook must normalize names');
+    console.log('Category slug generation: passed');
 
-  // 8. Clean up test records
-  console.log('\n--- Cleaning up temporary test records ---');
-  await Payment.findByIdAndDelete(testPayment._id);
-  await Order.findByIdAndDelete(testOrder._id);
-  await Cart.findByIdAndDelete(testCart._id);
-  await Product.findByIdAndDelete(testProduct._id);
-  await Category.findByIdAndDelete(testCategory._id);
-  await User.findByIdAndDelete(testUser._id);
-  console.log(' Cleanup complete. Database is pristine.');
+    records.product = await Product.create({
+      name: `Model Check Headphones ${suffix.slice(0, 8)}`,
+      description: 'Temporary model verification product',
+      sku: `MC-${suffix.slice(0, 16)}`,
+      price: 5000,
+      discount: 20,
+      category: records.category._id,
+      stock: 4,
+      images: ['https://example.invalid/model-check.jpg'],
+    });
+    assert.equal(records.product.finalPrice, 4000, 'discounted virtual price must be calculated');
+    assert.equal(records.product.isLowStock, true, 'low-stock virtual must reflect stock of four');
+    console.log('Product validation and virtual fields: passed');
 
-  await mongoose.disconnect();
-  console.log('\n✅ All 6 Mongoose models passed schema, validation, index, and relationship verification!');
-  process.exit(0);
+    records.cart = await Cart.create({ user: records.user._id, items: [{ product: records.product._id, quantity: 2 }] });
+    await records.cart.recalculateTotals();
+    await records.cart.save();
+    assert.equal(records.cart.total, 8000, 'cart total must use discounted server price');
+    console.log('Cart totals: passed');
+
+    records.order = await Order.create({
+      orderNumber: `TK-${Date.now()}-${suffix.slice(0, 8)}`,
+      user: records.user._id,
+      orderItems: [{ product: records.product._id, name: records.product.name, sku: records.product.sku, price: records.product.price, discount: records.product.discount, finalPrice: records.product.finalPrice, quantity: 2, image: records.product.images[0] }],
+      shippingAddress: { fullName: 'Model Check User', phone: '9876543210', address: '123 Model Test Street', city: 'Bengaluru', state: 'Karnataka', postalCode: '560001' },
+      itemsTotal: 8000,
+      totalAmount: 8000,
+    });
+    assert.equal(records.order.orderItems[0].sku, records.product.sku, 'order must preserve product snapshot data');
+    console.log('Order snapshots and validation: passed');
+
+    records.payment = await Payment.create({
+      order: records.order._id,
+      user: records.user._id,
+      transactionId: `TXN_MC_${suffix}`,
+      amount: 8000,
+      currency: 'INR',
+      status: 'success',
+      gatewayResponse: { simulatedCode: 'SIM_SUCCESS', message: 'Model verification', simulatedCardLast4: '4242' },
+    });
+    assert.equal(records.payment.status, 'success');
+    console.log('Payment validation: passed');
+  } finally {
+    const cleanupResults = await Promise.allSettled(
+      [['payment', Payment], ['order', Order], ['cart', Cart], ['product', Product], ['category', Category], ['user', User]]
+        .filter(([key]) => records[key]?._id)
+        .map(([key, Model]) => Model.deleteOne({ _id: records[key]._id }))
+    );
+    await mongoose.disconnect();
+    const cleanupError = cleanupResults.find((result) => result.status === 'rejected');
+    if (cleanupError) throw cleanupError.reason;
+    console.log('Temporary model verification records cleaned up.');
+  }
 }
 
-runModelVerification().catch((err) => {
-  console.error('❌ Model Verification Failed:', err);
-  process.exit(1);
+runModelVerification().catch((error) => {
+  console.error('Model verification failed:', error.message);
+  process.exitCode = 1;
 });

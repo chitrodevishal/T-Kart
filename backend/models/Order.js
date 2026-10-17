@@ -38,6 +38,11 @@ const orderItemSnapshotSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    imageSource: { type: String, default: '' },
+    imageCredit: { type: String, default: '' },
+    imageCreditUrl: { type: String, default: '' },
+    imageSourceUrl: { type: String, default: '' },
+    categoryName: { type: String, default: '' },
   },
   { _id: true }
 );
@@ -86,7 +91,7 @@ const paymentInfoSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'paid', 'failed'],
+      enum: ['pending', 'processing', 'paid', 'failed'],
       default: 'pending',
       index: true,
     },

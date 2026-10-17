@@ -1,21 +1,28 @@
 import express from 'express';
+import { protect } from '../middleware/authMiddleware.js';
+import {
+  getCart,
+  addCartItem,
+  updateCartItem,
+  removeCartItem,
+  clearCart,
+} from '../controllers/cartController.js';
 
 const router = express.Router();
 
 /**
- * Cart Routes Placeholder (Full implementation in Phase 7)
+ * Cart Routes (authenticated customer cart)
  * GET    /api/cart
  * POST   /api/cart/items
  * PATCH  /api/cart/items/:itemId
  * DELETE /api/cart/items/:itemId
  * DELETE /api/cart
  */
-router.get('/', (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Cart module active. Implementation arriving in Phase 7.',
-    data: { items: [], subtotal: 0, total: 0 },
-  });
-});
+router.use(protect);
+router.get('/', getCart);
+router.post('/items', addCartItem);
+router.patch('/items/:itemId', updateCartItem);
+router.delete('/items/:itemId', removeCartItem);
+router.delete('/', clearCart);
 
 export default router;

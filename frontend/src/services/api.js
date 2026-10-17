@@ -13,7 +13,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('tkart_token');
-    if (token) {
+    if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -26,7 +26,12 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Optional: Handle token expiry or unauthorized redirect in Phase 5
+      const endpoint = error.config?.url || '';
+      const isCredentialRequest = /\/auth\/(login|register)\/?$/.test(endpoint);
+      if (!isCredentialRequest) {
+        const authorization = error.config?.headers?.Authorization || error.config?.headers?.authorization || '';
+        window.dispatchEvent(new CustomEvent('tkart:session-expired', { detail: { authorization } }));
+      }
     }
     return Promise.reject(error);
   }

@@ -65,7 +65,7 @@ cartSchema.methods.recalculateTotals = async function () {
 
   for (const item of this.items) {
     const originalPrice = item.product.price;
-    const finalPrice = item.product.finalPrice || originalPrice;
+    const finalPrice = item.product.finalPrice ?? originalPrice;
 
     subtotal += originalPrice * item.quantity;
     total += finalPrice * item.quantity;

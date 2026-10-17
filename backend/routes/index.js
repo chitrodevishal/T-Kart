@@ -8,7 +8,6 @@ import orderRoutes from './orderRoutes.js';
 import paymentRoutes from './paymentRoutes.js';
 import adminRoutes from './adminRoutes.js';
 import AppError from '../utils/appError.js';
-import { authLimiter } from '../middleware/rateLimiters.js';
 
 const router = express.Router();
 
@@ -69,7 +68,7 @@ router.get('/error-test', (req, res, next) => {
 });
 
 // Resource Routes Mounting
-router.use('/auth', authLimiter, authRoutes);
+router.use('/auth', authRoutes);
 router.use('/categories', categoryRoutes);
 router.use('/products', productRoutes);
 router.use('/cart', cartRoutes);

@@ -87,11 +87,52 @@ Open `backend/.env` and update `MONGODB_URI`:
 # For Cloud Atlas:
 MONGODB_URI=mongodb+srv://tkart_admin:your_secure_password@cluster0.xxxxx.mongodb.net/tkart_db?retryWrites=true&w=majority
 
+# Optional only when Node's default resolver cannot resolve Atlas SRV records:
+# NODE_DNS_SERVERS=8.8.8.8,1.1.1.1
+
 # For Local MongoDB:
 # MONGODB_URI=mongodb://127.0.0.1:27017/tkart_db
 ```
 
 > **Security Reminder**: Never commit `backend/.env` to Git. The `.gitignore` file already excludes `.env` to prevent credential exposure.
+
+If Atlas hostnames resolve in the operating system but Node reports `querySrv ECONNREFUSED` or `ETIMEOUT`, configure `NODE_DNS_SERVERS` in `backend/.env` with DNS servers reachable from your network, then restart the backend. Leave it unset when Node's default DNS works.
+
+If Node then reports `unable to verify the first certificate`, use the Atlas-specific scripts on a Node release that supports `--use-system-ca` (the current project environment uses Node 24):
+
+```bash
+npm run dev:atlas
+npm run seed:catalog:atlas
+```
+
+These use the operating system's trusted certificates while keeping TLS verification enabled. The regular `dev`, `start`, and `seed:catalog` scripts remain available for environments where the default Node certificate store works.
+
+The Atlas catalog seeder adds four categories and 108 demo products. It keeps existing prices, stock, and valid manually assigned external image URLs; generated images use Pexels when `PEXELS_API_KEY` is configured and product-title/category-tagged external fallbacks otherwise:
+
+```bash
+npm run seed:catalog:atlas
+```
+
+To add the DummyJSON sample products without replacing the current catalog, first preview the live source and then import them into the configured MongoDB database:
+
+```bash
+npm run seed:dummyjson:atlas -- --dry-run
+npm run seed:dummyjson:atlas
+```
+
+Each source ID maps to a stable `DJ-<id>` product SKU, so rerunning the command skips already imported records. DummyJSON prices are multiplied by 100 for the T-Kart rupee display (for example, `5.01` becomes `501`), and the conversion is safe to rerun. Product images remain external HTTPS URLs. The customer application does not query DummyJSON; this command is the only import path.
+
+To migrate images on existing products without replacing valid manual image URLs, run:
+
+```bash
+npm run migrate:product-images:atlas
+```
+
+To remove all orders and their linked mock payments from the configured `tkart_db` database, run the guarded cleanup command:
+
+```bash
+npm run clear:orders:atlas
+```
 
 ---
 

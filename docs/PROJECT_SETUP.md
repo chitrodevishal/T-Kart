@@ -46,12 +46,28 @@ T-Kart/
    - `PORT=5000`
    - `CLIENT_URL=http://localhost:5173`
    - `MONGODB_URI=...` (Configured in Phase 2)
-   - `JWT_SECRET=...`
+   - `JWT_SECRET=...` (Use a private value of at least 32 characters; the backend refuses to start without it.)
+   - `ADMIN_EMAIL=...` and `ADMIN_PASSWORD=...` (Use your own admin account; the seed script rejects example placeholders and passwords shorter than 12 characters.)
 5. Start development server:
    ```bash
    npm run dev
    ```
    The backend server will listen at `http://localhost:5000`.
+
+6. Populate a starter storefront catalog in the configured MongoDB database:
+   ```bash
+   npm run seed:catalog:atlas
+   ```
+   This adds four categories and 108 sample products. Images are selected by title and category through Pexels when `PEXELS_API_KEY` is configured; otherwise, product-title/category-tagged external fallbacks are used. Reruns preserve existing valid manual URLs and refresh known legacy LoremFlickr demo URLs.
+
+7. Optional: set `PEXELS_API_KEY` in `backend/.env` to enable title-matched image search. To migrate existing catalog records, run `npm run migrate:product-images:atlas` from `backend` (or `npm run migrate:product-images` for local MongoDB). The script preserves valid manual and unique assigned images and replaces missing, invalid, legacy, generic, or duplicate auto-assigned images.
+
+8. To import the DummyJSON sample catalog into MongoDB, preview the feed and then run the idempotent importer from `backend`:
+   ```bash
+   npm run seed:dummyjson:atlas -- --dry-run
+   npm run seed:dummyjson:atlas
+   ```
+   The importer maps source product IDs to stable `DJ-<id>` SKUs, maps source categories into the T-Kart category taxonomy, multiplies DummyJSON prices by 100 for the T-Kart rupee display, stores HTTPS image URLs, and skips products already imported. It converts existing imported prices only when they still match the original source amount, so reruns do not multiply them again. Customers continue to use T-Kart's MongoDB-backed API; DummyJSON is fetched only when this seed command is run.
 
 ---
 

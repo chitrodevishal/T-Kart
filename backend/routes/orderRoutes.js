@@ -1,19 +1,18 @@
 import express from 'express';
+import { protect } from '../middleware/authMiddleware.js';
+import { createOrder, getMyOrders, getOrderById } from '../controllers/orderController.js';
 
 const router = express.Router();
 
 /**
- * Order Routes Placeholder (Full implementation in Phase 8)
+ * Customer-owned order routes
  * POST   /api/orders
  * GET    /api/orders/my-orders
  * GET    /api/orders/:id
  */
-router.get('/my-orders', (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Orders module active. Implementation arriving in Phase 8.',
-    data: [],
-  });
-});
+router.use(protect);
+router.post('/', createOrder);
+router.get('/my-orders', getMyOrders);
+router.get('/:id', getOrderById);
 
 export default router;

@@ -7,6 +7,8 @@ import rateLimit from 'express-rate-limit';
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 200,
+  // Keep the lightweight health check available even when normal API traffic is throttled.
+  skip: (req) => req.path === '/health',
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -22,7 +24,7 @@ export const apiLimiter = rateLimit({
  */
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 15,
+  max: process.env.NODE_ENV === 'development' ? 50 : 15,
   standardHeaders: true,
   legacyHeaders: false,
   message: {

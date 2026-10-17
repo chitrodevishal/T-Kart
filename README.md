@@ -8,6 +8,8 @@ A modern, full-stack MERN e-commerce application featuring a customer shopping s
 
 T-Kart is split into two cleanly decoupled applications:
 
+For complete setup, usage, testing, MongoDB, and Postman instructions, see [docs/SETUP_TEST_USE.md](docs/SETUP_TEST_USE.md).
+
 - **`frontend/`**: React 19 single-page application built with Vite, Tailwind CSS, Lucide React, and React Router.
 - **`backend/`**: Node.js & Express RESTful API with MongoDB Atlas, Mongoose, JWT authentication, and enterprise security middleware.
 

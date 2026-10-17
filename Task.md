@@ -495,75 +495,75 @@ work is verified.
 
 ### Phase 5 --- Authentication and authorization
 
--   [ ] Registration and login.
--   [ ] Password hashing.
--   [ ] JWT authentication.
--   [ ] Current-user endpoint.
--   [ ] Admin seed/setup procedure.
--   [ ] Admin role middleware.
--   [ ] Test access-control cases in Postman.
+-   [x] Registration and login.
+-   [x] Password hashing.
+-   [x] JWT authentication.
+-   [x] Current-user endpoint.
+-   [x] Admin seed/setup procedure.
+-   [x] Admin role middleware.
+-   [x] Test access-control cases in Postman.
 
 ### Phase 6 --- Product and category APIs
 
--   [ ] Product CRUD.
--   [ ] Search, filtering, sorting, and pagination.
--   [ ] Category CRUD.
--   [ ] Validate APIs in Postman.
+-   [x] Product CRUD.
+-   [x] Search, filtering, sorting, and pagination.
+-   [x] Category CRUD.
+-   [x] Validate APIs in Postman.
 
 ### Phase 7 --- Cart and inventory
 
--   [ ] Cart retrieval and mutations.
--   [ ] Server-side price calculation.
--   [ ] Stock validation.
--   [ ] Admin inventory updates.
--   [ ] Validate APIs in Postman.
+-   [x] Cart retrieval and mutations.
+-   [x] Server-side price calculation.
+-   [x] Stock validation.
+-   [x] Admin inventory updates.
+-   [x] Validate APIs in Postman.
 
 ### Phase 8 --- Orders and mock payments
 
--   [ ] Order creation and snapshots.
--   [ ] Order history and details.
--   [ ] Mock payment success/failure.
--   [ ] Order-status transitions.
--   [ ] Inventory deduction and restoration rules.
--   [ ] Validate APIs and edge cases in Postman.
+-   [x] Order creation and snapshots.
+-   [x] Order history and details.
+-   [x] Mock payment success/failure.
+-   [x] Order-status transitions.
+-   [x] Inventory deduction and restoration rules.
+-   [x] Validate APIs and edge cases in Postman.
 
 ### Phase 9 --- Postman collection and API documentation
 
--   [ ] Create importable collection.
--   [ ] Configure environment variables.
--   [ ] Add positive and negative tests.
--   [ ] Export and verify collection.
--   [ ] Complete API documentation.
+-   [x] Create importable collection.
+-   [x] Configure environment variables.
+-   [x] Add positive and negative tests.
+-   [x] Export and verify collection.
+-   [x] Complete API documentation.
 
 ### Phase 10 --- Customer frontend
 
--   [ ] Shared layout and navigation.
--   [ ] Home page.
--   [ ] Product listing and filters.
--   [ ] Product details.
--   [ ] Authentication pages.
--   [ ] Cart.
--   [ ] Checkout and mock payment UI.
--   [ ] Customer order history.
+-   [x] Shared layout and navigation.
+-   [x] Home page.
+-   [x] Product listing and filters.
+-   [x] Product details.
+-   [x] Authentication pages.
+-   [x] Cart.
+-   [x] Checkout and mock payment UI.
+-   [x] Customer order history.
 
 ### Phase 11 --- Admin dashboard
 
--   [ ] Admin layout and protected navigation.
--   [ ] Dashboard metrics.
--   [ ] Product management.
--   [ ] Category management.
--   [ ] Inventory management.
--   [ ] Order management.
--   [ ] Customer management.
+-   [x] Admin layout and protected navigation.
+-   [x] Dashboard metrics.
+-   [x] Product management.
+-   [x] Category management.
+-   [x] Inventory management.
+-   [x] Order management.
+-   [x] Customer management.
 
 ### Phase 12 --- Frontend/backend integration
 
--   [ ] Axios API client and configuration.
--   [ ] Authentication state and protected routes.
--   [ ] Integrate product and category APIs.
--   [ ] Integrate cart and checkout.
--   [ ] Integrate orders and mock payments.
--   [ ] Integrate admin APIs.
+-   [x] Axios API client and configuration.
+-   [x] Authentication state and protected routes.
+-   [x] Integrate product and category APIs.
+-   [x] Integrate cart and checkout.
+-   [x] Integrate orders and mock payments.
+-   [x] Integrate admin APIs.
 -   [ ] Verify loading and error handling.
 
 ### Phase 13 --- End-to-end testing and security review
@@ -572,9 +572,9 @@ work is verified.
 -   [ ] Test complete admin journey.
 -   [ ] Verify MongoDB records in Compass.
 -   [ ] Test responsive layouts.
--   [ ] Test authorization and ownership.
--   [ ] Test inventory and cancellation edge cases.
--   [ ] Fix critical and high-severity defects.
+-   [x] Test authorization and ownership.
+-   [x] Test inventory and cancellation edge cases.
+-   [x] Fix critical and high-severity defects.
 
 ### Phase 14 --- Documentation and deployment preparation
 

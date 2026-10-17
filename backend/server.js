@@ -1,10 +1,11 @@
-import dotenv from 'dotenv';
-
-// Load environment variables from .env file before anything else
-dotenv.config();
-
+import 'dotenv/config';
+import { configureDnsServers } from './config/dns.js';
 import app from './app.js';
 import connectDB from './config/db.js';
+import { getJwtSecret } from './utils/jwt.js';
+
+configureDnsServers();
+getJwtSecret();
 
 const PORT = process.env.PORT || 5000;
 

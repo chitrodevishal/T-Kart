@@ -1,27 +1,18 @@
 import express from 'express';
+import { protect, adminOnly } from '../middleware/authMiddleware.js';
+import { getDashboard, getCustomers, updateCustomerStatus } from '../controllers/adminController.js';
+import { getInventory, updateProductStock } from '../controllers/inventoryController.js';
+import { getAdminOrders, updateOrderStatus } from '../controllers/orderController.js';
 
 const router = express.Router();
+router.use(protect, adminOnly);
 
-/**
- * Admin Routes Placeholder (Full implementation in Phases 5-11)
- * GET   /api/admin/dashboard
- * GET   /api/admin/customers
- * GET   /api/admin/inventory
- * PATCH /api/admin/products/:id/stock
- * GET   /api/admin/orders
- * PATCH /api/admin/orders/:id/status
- */
-router.get('/dashboard', (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Admin module active. Implementation arriving in subsequent phases.',
-    data: {
-      totalOrders: 0,
-      totalRevenue: 0,
-      totalProducts: 0,
-      totalCustomers: 0,
-    },
-  });
-});
+router.get('/dashboard', getDashboard);
+router.get('/customers', getCustomers);
+router.patch('/customers/:id/status', updateCustomerStatus);
+router.get('/inventory', getInventory);
+router.patch('/products/:id/stock', updateProductStock);
+router.get('/orders', getAdminOrders);
+router.patch('/orders/:id/status', updateOrderStatus);
 
 export default router;

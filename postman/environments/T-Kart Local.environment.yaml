@@ -1,0 +1,10 @@
+name: T-Kart Local
+values:
+  - key: baseUrl
+    value: 'http://localhost:5000/api'
+  - key: serverUrl
+    value: 'http://localhost:5000'
+  - key: adminEmail
+    value: admin@tkart.com
+  - key: adminPassword
+    value: ''
