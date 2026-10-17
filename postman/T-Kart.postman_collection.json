@@ -1,0 +1,105 @@
+{
+  "info": {
+    "_postman_id": "tkart-ecom-postman-collection",
+    "name": "T-Kart E-Commerce Platform API",
+    "description": "Comprehensive Postman test collection for T-Kart MERN full-stack e-commerce REST API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "customerToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "productId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "categoryId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "orderId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "00 - System & Health",
+      "item": [
+        {
+          "name": "API Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            },
+            "description": "Verifies that the T-Kart backend Express server is running and healthy."
+          },
+          "response": []
+        },
+        {
+          "name": "API Root Welcome",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": [""]
+            },
+            "description": "Root server status and welcome message."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "01 - Authentication (Phase 5)",
+      "item": []
+    },
+    {
+      "name": "02 - Categories (Phase 6)",
+      "item": []
+    },
+    {
+      "name": "03 - Products (Phase 6)",
+      "item": []
+    },
+    {
+      "name": "04 - Cart (Phase 7)",
+      "item": []
+    },
+    {
+      "name": "05 - Orders & Checkout (Phase 8)",
+      "item": []
+    },
+    {
+      "name": "06 - Mock Payment (Phase 8)",
+      "item": []
+    },
+    {
+      "name": "07 - Admin Dashboard & Management (Phases 5-11)",
+      "item": []
+    }
+  ]
+}

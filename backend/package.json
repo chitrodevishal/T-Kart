@@ -1,0 +1,28 @@
+{
+  "name": "t-kart-backend",
+  "version": "1.0.0",
+  "description": "T-Kart E-Commerce REST API Backend",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "ecommerce",
+    "mern",
+    "express",
+    "api",
+    "tkart"
+  ],
+  "author": "T-Kart Team",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "morgan": "^1.10.0"
+  }
+}
