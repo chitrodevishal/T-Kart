@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ShoppingBag, Server, CheckCircle2, ShieldCheck, Database, Layers, Activity, RefreshCw } from 'lucide-react';
+import { ShoppingBag, Server, CheckCircle2, ShieldCheck, Database, Layers, Activity, RefreshCw, AlertTriangle, Cpu } from 'lucide-react';
 import api from './services/api';
 
 export default function App() {
@@ -9,6 +9,8 @@ export default function App() {
     data: null,
     error: null
   });
+
+  const [errorTestResult, setErrorTestResult] = useState(null);
 
   const checkBackendHealth = async () => {
     setApiStatus(prev => ({ ...prev, loading: true, error: null }));
@@ -30,11 +32,26 @@ export default function App() {
     }
   };
 
+  const testOperationalError = async () => {
+    setErrorTestResult({ loading: true, data: null });
+    try {
+      await api.get('/error-test?type=operational');
+    } catch (err) {
+      setErrorTestResult({
+        loading: false,
+        status: err.response?.status,
+        message: err.response?.data?.message || err.message,
+        success: err.response?.data?.success
+      });
+    }
+  };
+
   useEffect(() => {
     checkBackendHealth();
   }, []);
 
   const dbConnected = apiStatus.data?.database?.connected;
+  const sys = apiStatus.data?.system;
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans">
@@ -48,7 +65,7 @@ export default function App() {
             <div>
               <span className="text-xl font-bold tracking-tight text-slate-900">T-Kart</span>
               <span className="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                Phase 2 Verified
+                Phase 3 Verified
               </span>
             </div>
           </div>
@@ -87,9 +104,27 @@ export default function App() {
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm transition-all shadow-lg shadow-blue-600/30 active:scale-95 cursor-pointer"
               >
                 <RefreshCw className={`w-4 h-4 ${apiStatus.loading ? 'animate-spin' : ''}`} />
-                Refresh API & Database Status
+                Refresh API Health
+              </button>
+              <button
+                onClick={testOperationalError}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm transition-all active:scale-95 cursor-pointer"
+              >
+                <AlertTriangle className="w-4 h-4 text-amber-400" />
+                Test Centralized Error Handler (400)
               </button>
             </div>
+
+            {errorTestResult && (
+              <div className="mt-4 p-3 rounded-xl bg-slate-900/90 border border-slate-700 text-xs font-mono text-slate-300 flex items-center justify-between">
+                <span>
+                  <strong>Status {errorTestResult.status}:</strong> {errorTestResult.message}
+                </span>
+                <span className="text-emerald-400 ml-4 font-sans font-medium text-[11px] px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
+                  Global Error Handler Caught Successfully
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -123,7 +158,7 @@ export default function App() {
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>React Router DOM & Axios integrated</span>
+                  <span>Axios interceptor configured</span>
                 </li>
               </ul>
             </div>
@@ -146,18 +181,27 @@ export default function App() {
                   {apiStatus.loading ? 'Checking...' : apiStatus.healthy ? ':5000 Active' : 'Disconnected'}
                 </span>
               </div>
-              <ul className="space-y-2 text-xs text-slate-600 mt-4">
+
+              {sys && (
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-700 space-y-1 mb-2">
+                  <div><strong>Node:</strong> {sys.nodeVersion}</div>
+                  <div><strong>Heap:</strong> {sys.memoryUsageMB.heapUsed} MB</div>
+                  <div><strong>Uptime:</strong> {sys.uptimeSeconds}s</div>
+                </div>
+              )}
+
+              <ul className="space-y-2 text-xs text-slate-600 mt-2">
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>Express app configured with Helmet & CORS</span>
+                  <span>Helmet headers & CORS whitelisting</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>Rate limiting & centralized error handling</span>
+                  <span>Dual rate limiting (general & auth)</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>Native watch mode (0 vulnerabilities)</span>
+                  <span>Centralized error handler & 404 catcher</span>
                 </li>
               </ul>
             </div>
@@ -200,7 +244,7 @@ export default function App() {
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>Compass & Atlas ready</span>
+                  <span>Mongoose autoIndex enabled</span>
                 </li>
               </ul>
             </div>
@@ -213,30 +257,38 @@ export default function App() {
             <Layers className="w-5 h-5 text-blue-600" />
             <span>T-Kart Development Milestones</span>
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="p-4 rounded-xl border border-emerald-300 bg-emerald-50/40">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">Phase 1 Complete</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">Phase 1 Done</span>
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               </div>
               <h4 className="font-semibold text-slate-900 text-sm mb-1">Project Initialization</h4>
               <p className="text-xs text-slate-600">Frontend & backend scaffolds, environment templates, dependencies & startup verification.</p>
             </div>
+            <div className="p-4 rounded-xl border border-emerald-300 bg-emerald-50/40">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">Phase 2 Done</span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              </div>
+              <h4 className="font-semibold text-slate-900 text-sm mb-1">MongoDB & Compass</h4>
+              <p className="text-xs text-slate-600">tkart_db cluster, Mongoose connection, Compass setup guide and diagnostics.</p>
+            </div>
             <div className="p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50/30">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">Phase 2 (Verified)</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">Phase 3 (Verified)</span>
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
               </div>
-              <h4 className="font-semibold text-slate-900 text-sm mb-1">MongoDB & Mongoose Setup</h4>
-              <p className="text-xs text-slate-600">tkart_db connectivity, Mongoose configuration, diagnostic health check & Compass guide.</p>
+              <h4 className="font-semibold text-slate-900 text-sm mb-1">Backend Foundation</h4>
+              <p className="text-xs text-slate-600">Centralized error handler, CORS policies, Helmet security, rate limiting & route architecture.</p>
             </div>
             <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Phase 3 (Next)</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Phase 4 (Next)</span>
                 <ShieldCheck className="w-4 h-4 text-slate-400" />
               </div>
-              <h4 className="font-semibold text-slate-900 text-sm mb-1">Backend Foundation</h4>
-              <p className="text-xs text-slate-600">Enhanced middleware pipeline, CORS policies, centralized error handlers, and route architecture.</p>
+              <h4 className="font-semibold text-slate-900 text-sm mb-1">Database Models</h4>
+              <p className="text-xs text-slate-600">User, Product, Category, Cart, Order, Payment Mongoose schemas and validations.</p>
             </div>
           </div>
         </div>

@@ -477,11 +477,11 @@ work is verified.
 
 ### Phase 3 --- Backend foundation
 
--   [ ] Configure Express application and server.
--   [ ] Configure middleware and CORS.
--   [ ] Configure centralized error handling.
--   [ ] Add health-check endpoint.
--   [ ] Verify server and database startup.
+-   [x] Configure Express application and server.
+-   [x] Configure middleware and CORS.
+-   [x] Configure centralized error handling.
+-   [x] Add health-check endpoint.
+-   [x] Verify server and database startup.
 
 ### Phase 4 --- Database models
 

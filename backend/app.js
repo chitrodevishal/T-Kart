@@ -2,96 +2,74 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import rateLimit from 'express-rate-limit';
+import routes from './routes/index.js';
+import { apiLimiter } from './middleware/rateLimiters.js';
+import { notFoundHandler, globalErrorHandler } from './middleware/errorMiddleware.js';
 
 const app = express();
 
-// Security HTTP headers
-app.use(helmet());
-
-// CORS Configuration
-const allowedOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
-app.use(cors({
-  origin: allowedOrigin,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+// 1. Security HTTP headers via Helmet
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
 }));
 
-// Request logging in development
+// 2. CORS Configuration
+const allowedOrigins = [
+  process.env.CLIENT_URL || 'http://localhost:5173',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, Postman)
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`Origin ${origin} not permitted by CORS policy`));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+}));
+
+// 3. HTTP Request Logging in development
 if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('dev'));
 }
 
-// Rate limiting to protect API from abuse/brute-force
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 200, // Limit each IP to 200 requests per windowMs
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    success: false,
-    message: 'Too many requests from this IP, please try again after 15 minutes.'
-  }
-});
+// 4. Rate Limiting for overall API traffic
 app.use('/api', apiLimiter);
 
-// Parse incoming JSON and URL-encoded payloads
+// 5. Body Parsers with size limits to prevent Denial of Service (DoS)
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
-import mongoose from 'mongoose';
+// 6. Mount Master API Routes
+app.use('/api', routes);
 
-// Health Check Endpoint (Reports API status and MongoDB connection state)
-app.get('/api/health', (req, res) => {
-  const dbStates = ['disconnected', 'connected', 'connecting', 'disconnecting'];
-  const stateCode = mongoose.connection.readyState;
-  const dbStatus = dbStates[stateCode] || 'unknown';
-
-  res.status(200).json({
-    success: true,
-    message: 'T-Kart REST API is running healthy',
-    database: {
-      status: dbStatus,
-      connected: stateCode === 1,
-      host: mongoose.connection.host || null,
-      name: mongoose.connection.name || null
-    },
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development',
-    uptimeSeconds: Math.floor(process.uptime())
-  });
-});
-
-// Root Welcome Endpoint
+// 7. Root Welcome Endpoint
 app.get('/', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'Welcome to T-Kart E-Commerce Platform API',
-    documentation: '/api/health'
+    message: 'Welcome to T-Kart E-Commerce Platform REST API',
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth',
+      products: '/api/products',
+      categories: '/api/categories',
+      cart: '/api/cart',
+      orders: '/api/orders',
+      payments: '/api/payments',
+      admin: '/api/admin',
+    },
   });
 });
 
-// 404 Catch-All Handler for Undefined Routes
-app.use((req, res, next) => {
-  res.status(404).json({
-    success: false,
-    message: `Cannot find ${req.method} ${req.originalUrl} on T-Kart server`
-  });
-});
+// 8. 404 Catch-All Handler for Undefined Endpoints
+app.use(notFoundHandler);
 
-// Centralized Global Error Handler
-app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
-
-  console.error(`[Error] ${req.method} ${req.originalUrl}:`, err);
-
-  res.status(statusCode).json({
-    success: false,
-    message,
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
-  });
-});
+// 9. Centralized Global Error Handler Middleware
+app.use(globalErrorHandler);
 
 export default app;
