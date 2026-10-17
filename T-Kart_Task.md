@@ -468,12 +468,12 @@ work is verified.
 
 ### Phase 2 --- MongoDB setup
 
--   [ ] Create Atlas project and cluster.
--   [ ] Configure database user and network access.
--   [ ] Connect MongoDB Compass.
--   [ ] Configure backend environment variables.
--   [ ] Connect backend with Mongoose.
--   [ ] Verify connection and inspect database.
+-   [x] Create Atlas project and cluster.
+-   [x] Configure database user and network access.
+-   [x] Connect MongoDB Compass.
+-   [x] Configure backend environment variables.
+-   [x] Connect backend with Mongoose.
+-   [x] Verify connection and inspect database.
 
 ### Phase 3 --- Backend foundation
 

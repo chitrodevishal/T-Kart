@@ -40,11 +40,23 @@ app.use('/api', apiLimiter);
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
-// Health Check Endpoint (Essential for Phase 1 verification and uptime monitoring)
+import mongoose from 'mongoose';
+
+// Health Check Endpoint (Reports API status and MongoDB connection state)
 app.get('/api/health', (req, res) => {
+  const dbStates = ['disconnected', 'connected', 'connecting', 'disconnecting'];
+  const stateCode = mongoose.connection.readyState;
+  const dbStatus = dbStates[stateCode] || 'unknown';
+
   res.status(200).json({
     success: true,
     message: 'T-Kart REST API is running healthy',
+    database: {
+      status: dbStatus,
+      connected: stateCode === 1,
+      host: mongoose.connection.host || null,
+      name: mongoose.connection.name || null
+    },
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
     uptimeSeconds: Math.floor(process.uptime())
