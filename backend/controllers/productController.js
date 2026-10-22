@@ -5,6 +5,7 @@ import AppError from '../utils/appError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { isValidExternalImageUrl } from '../utils/imageUrl.js';
 import productImageService from '../services/productImageService.js';
+import { refreshDummyJsonCategory, refreshDummyJsonProduct, syncDummyJsonCatalog } from '../services/dummyJsonCatalogService.js';
 
 const normalizeRequestedImages = (image, images, next) => {
   const requested = [];
@@ -99,16 +100,20 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
     return next(new AppError('sortOrder must be either asc or desc', 400));
   }
 
-  const filter = {};
-  if (req.user?.role !== 'admin') filter.isActive = true;
+  await syncDummyJsonCatalog();
+
+  const filter = { catalogSource: 'dummyjson', externalId: { $exists: true }, isActive: true };
   if (search?.trim()) filter.$text = { $search: search.trim() };
   if (category) {
     if (mongoose.isValidObjectId(category)) {
       filter.category = category;
+      const categoryDoc = await Category.findOne({ _id: category, catalogSource: 'dummyjson' });
+      if (categoryDoc?.externalId) await refreshDummyJsonCategory(categoryDoc.externalId);
     } else {
-      const categoryDoc = await Category.findOne({ slug: category });
+      const categoryDoc = await Category.findOne({ catalogSource: 'dummyjson', $or: [{ slug: category }, { externalId: category }] });
       // No matching slug should produce an empty result set, not an unfiltered catalog.
       filter.category = categoryDoc?._id ?? new mongoose.Types.ObjectId();
+      if (categoryDoc?.externalId) await refreshDummyJsonCategory(categoryDoc.externalId);
     }
   }
   if (min !== undefined || max !== undefined) {
@@ -155,18 +160,18 @@ export const getProductById = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
   // Validate MongoDB ObjectId
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return next(new AppError('Invalid product ID format', 400));
+  await syncDummyJsonCatalog();
+  let product = mongoose.Types.ObjectId.isValid(id)
+    ? await Product.findOne({ _id: id, catalogSource: 'dummyjson', externalId: { $exists: true } }).populate('category', 'name slug image')
+    : null;
+  const externalId = product?.externalId ?? (/^\d+$/.test(id) ? Number(id) : null);
+  if (externalId !== null) {
+    try {
+      product = await refreshDummyJsonProduct(externalId);
+    } catch (error) {
+      if (!product) throw error;
+    }
   }
-
-  const query = Product.findById(id).populate('category', 'name slug image');
-
-  // Non-admin users can only see active products
-  if (req.user?.role !== 'admin') {
-    query.where('isActive').equals(true);
-  }
-
-  const product = await query;
 
   if (!product) {
     return next(new AppError('Product not found', 404));

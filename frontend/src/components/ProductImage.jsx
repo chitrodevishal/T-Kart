@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { ImageOff, LoaderCircle } from 'lucide-react';
+import { ImageOff } from 'lucide-react';
+import { LoadingSpinner } from './LoadingSpinner';
+
+const FALLBACK_IMAGE = '/images/product-fallback.svg';
 
 const isExternalHttpsUrl = (value) => {
   try {
@@ -10,19 +13,9 @@ const isExternalHttpsUrl = (value) => {
   }
 };
 
-function getCategoryFallbackImage(category = '', title = '', sku = '') {
-  const identity = `${String(title).trim().toLowerCase()}|${String(category).trim().toLowerCase()}|${String(sku).trim().toLowerCase()}`;
-  let lock = 2166136261;
-  for (const char of identity) lock = Math.imul(lock ^ char.charCodeAt(0), 16777619) >>> 0;
-  const tags = [...new Set(`${title} ${category}`.toLowerCase().match(/[a-z0-9]+/g) || [])].filter((tag) => tag.length > 2).slice(0, 8);
-  if (!tags.length) return 'https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&fit=crop&w=900&q=85';
-  return `https://loremflickr.com/900/900/${encodeURIComponent(tags.join(','))}?lock=${lock}`;
-}
-
-export function ProductImage({ product, className = '', loading = 'lazy' }) {
-  const primary = product?.image || product?.images?.[0] || '';
-  const category = typeof product?.category === 'string' ? product.category : product?.category?.name || '';
-  const fallback = getCategoryFallbackImage(category, product?.name, product?.sku);
+export function ProductImage({ product, className = '', loading = 'lazy', naturalHeight = false, priority = false }) {
+  const primary = product?.imageSource?.endsWith('-fallback') ? '' : product?.image || product?.images?.[0] || '';
+  const fallback = FALLBACK_IMAGE;
   const canLoadPrimary = isExternalHttpsUrl(primary);
   const imageKey = `${primary}\u0000${fallback}`;
   const [imageState, setImageState] = useState(null);
@@ -44,21 +37,25 @@ export function ProductImage({ product, className = '', loading = 'lazy' }) {
   };
 
   return (
-    <div className={`relative grid h-full w-full place-items-center overflow-hidden bg-[#f0efe9] ${className}`}>
+    <div className={`relative ${naturalHeight ? 'w-full' : 'grid h-full w-full place-items-center'} overflow-hidden bg-[#f0efe9] ${naturalHeight && status === 'broken' ? 'min-h-32' : ''} ${className}`}>
       {status !== 'broken' ? <img
         key={src}
         src={src}
         alt={product?.name || 'Product image'}
-        loading={loading}
+        width={600}
+        height={600}
+        loading={priority ? 'eager' : loading}
+        decoding="async"
+        fetchPriority={priority ? 'high' : 'auto'}
         onLoad={() => updateImageState({ status: 'loaded' })}
         onError={onError}
-        className={`w-full h-full object-contain object-center p-2 transition-opacity duration-200 ${status === 'loaded' ? 'opacity-100' : 'opacity-0'}`}
+        className={`block w-full ${naturalHeight ? 'h-auto' : 'h-full'} object-contain object-center p-1 transition-opacity duration-200 ${status === 'loaded' ? 'opacity-100' : 'opacity-0'}`}
       /> : <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-[#f0efe9] p-3 text-center text-slate-400">
         <ImageOff size={22} aria-hidden="true" />
         <span className="line-clamp-2 text-[10px] font-medium">{product?.name || 'Product image'}</span>
       </div>}
-      {status === 'loading' && <div role="status" aria-label="Loading product image" className="absolute inset-0 grid place-items-center bg-[#f0efe9]">
-        <LoaderCircle size={20} className="animate-spin text-slate-400" />
+      {status === 'loading' && <div className="absolute inset-0 grid place-items-center bg-[#f0efe9]">
+        <LoadingSpinner label="Loading product image" size="h-6 w-6" />
       </div>}
     </div>
   );

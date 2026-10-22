@@ -5,6 +5,7 @@ import Order from '../models/Order.js';
 import Product from '../models/Product.js';
 import AppError from '../utils/appError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
+import { syncDummyJsonCatalog } from '../services/dummyJsonCatalogService.js';
 
 const roundMoney = (amount) => Math.round((amount + Number.EPSILON) * 100) / 100;
 
@@ -15,6 +16,7 @@ const rollbackStock = async (reserved) => {
 };
 
 export const createOrder = asyncHandler(async (req, res, next) => {
+  await syncDummyJsonCatalog();
   const shippingAddress = req.body?.shippingAddress;
   const requiredAddressFields = ['fullName', 'phone', 'address', 'city', 'state', 'postalCode'];
   if (!shippingAddress || typeof shippingAddress !== 'object' || Array.isArray(shippingAddress) ||

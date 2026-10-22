@@ -79,7 +79,6 @@ export function StoreLayout() {
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <Link to="/" className="font-extrabold tracking-tight text-slate-800">T-kart<span className="text-emerald-700">.</span></Link>
           <div className="space-y-1"><p>Considered goods for everyday living.</p></div>
-          <Link to="/system" className="inline-flex items-center gap-1 text-xs font-medium hover:text-emerald-800">Platform status <ArrowRight size={13} /></Link>
         </div>
       </footer>
     </div>

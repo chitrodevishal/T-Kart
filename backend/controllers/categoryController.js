@@ -3,13 +3,15 @@ import Category from '../models/Category.js';
 import Product from '../models/Product.js';
 import AppError from '../utils/appError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
+import { syncDummyJsonCatalog } from '../services/dummyJsonCatalogService.js';
 
 /**
  * Get all categories
  * Public endpoint - returns only active categories for non-admin users
  */
 export const getAllCategories = asyncHandler(async (req, res, next) => {
-  const query = Category.find();
+  await syncDummyJsonCatalog();
+  const query = Category.find({ catalogSource: 'dummyjson', externalId: { $exists: true } });
 
   // Non-admin users can only see active categories
   if (req.user?.role !== 'admin') {

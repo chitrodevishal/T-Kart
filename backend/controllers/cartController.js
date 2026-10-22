@@ -3,6 +3,7 @@ import Cart from '../models/Cart.js';
 import Product from '../models/Product.js';
 import AppError from '../utils/appError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
+import { syncDummyJsonCatalog } from '../services/dummyJsonCatalogService.js';
 
 const getOrCreateCart = async (userId) => {
   let cart = await Cart.findOne({ user: userId });
@@ -25,6 +26,7 @@ const saveCart = async (cart, res, status = 200, message = 'Cart retrieved succe
 };
 
 export const getCart = asyncHandler(async (req, res) => {
+  await syncDummyJsonCatalog();
   const cart = await getOrCreateCart(req.user._id);
   await saveCart(cart, res);
 });

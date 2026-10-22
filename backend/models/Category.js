@@ -2,6 +2,12 @@ import mongoose from 'mongoose';
 
 const categorySchema = new mongoose.Schema(
   {
+    externalId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+    catalogSource: { type: String, trim: true, index: true },
     name: {
       type: String,
       required: [true, 'Please provide a category name'],

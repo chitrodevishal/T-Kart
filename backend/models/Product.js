@@ -3,6 +3,12 @@ import { isValidExternalImageUrl } from '../utils/imageUrl.js';
 
 const productSchema = new mongoose.Schema(
   {
+    externalId: {
+      type: Number,
+      unique: true,
+      sparse: true,
+    },
+    catalogSource: { type: String, trim: true, index: true },
     name: {
       type: String,
       required: [true, 'Please provide a product name'],
