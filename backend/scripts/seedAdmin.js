@@ -23,7 +23,7 @@ async function seedAdmin() {
 
   const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/tkart_db';
   configureDnsServers();
-  await mongoose.connect(uri);
+  await mongoose.connect(uri, { tls: true, tlsAllowInvalidCertificates: false });
   console.log(' Connected to MongoDB:', mongoose.connection.name);
 
   let adminUser = await User.findOne({ email: adminEmail });

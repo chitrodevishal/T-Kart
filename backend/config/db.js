@@ -9,7 +9,9 @@ export const connectDB = async () => {
 
   try {
     const conn = await mongoose.connect(uri, {
-      autoIndex: true, // Build indexes defined in Mongoose schemas
+      autoIndex: true,
+      tls: true,
+      tlsAllowInvalidCertificates: false,
     });
 
     console.log(`=========================================`);

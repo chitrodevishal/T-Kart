@@ -1,0 +1,13 @@
+$kind: http-request
+name: /users
+description: ""
+url: http://localhost:3000/users
+method: GET
+body:
+  type: json
+  content: "{\r
+
+    \    \"name\":\"Mr. Vishal Chitrode\"\r
+
+    }"
+order: 2000

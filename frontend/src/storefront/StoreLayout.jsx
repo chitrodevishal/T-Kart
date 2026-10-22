@@ -45,7 +45,7 @@ export function StoreLayout() {
         <div className="mx-auto flex max-w-7xl items-center gap-5 px-4 py-4 sm:px-6 lg:px-8">
           <Link to="/" className="flex shrink-0 items-center gap-2.5" aria-label="T-Kart home">
             <span className="grid h-10 w-10 place-items-center rounded-2xl bg-emerald-900 text-white"><ShoppingBag size={20} /></span>
-            <span className="text-xl font-extrabold tracking-tight">t-kart<span className="text-emerald-700">.</span></span>
+            <span className="text-xl font-extrabold tracking-tight">T-kart<span className="text-emerald-700">.</span></span>
           </Link>
           <form onSubmit={submitSearch} className="hidden max-w-xl flex-1 items-center rounded-full border border-slate-200 bg-white px-4 py-2.5 md:flex">
             <Search className="mr-2 h-4 w-4 text-slate-400" />
@@ -77,7 +77,7 @@ export function StoreLayout() {
       <Outlet />
       <footer className="mt-20 border-t border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <Link to="/" className="font-extrabold tracking-tight text-slate-800">t-kart<span className="text-emerald-700">.</span></Link>
+          <Link to="/" className="font-extrabold tracking-tight text-slate-800">T-kart<span className="text-emerald-700">.</span></Link>
           <div className="space-y-1"><p>Considered goods for everyday living.</p></div>
           <Link to="/system" className="inline-flex items-center gap-1 text-xs font-medium hover:text-emerald-800">Platform status <ArrowRight size={13} /></Link>
         </div>
