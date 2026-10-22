@@ -11,13 +11,13 @@ import Order from '../models/Order.js';
 import User from '../models/User.js';
 import { generateToken } from '../utils/jwt.js';
 
-const enabled = process.env.RUN_PRODUCT_IMAGE_API_INTEGRATION === 'true' && Boolean(process.env.MONGODB_URI);
+const enabled = process.env.RUN_PRODUCT_IMAGE_API_INTEGRATION === 'true' && Boolean(process.env.MONGO_URI);
 
 test('product image API creates, preserves, updates, and migrates external images on an isolated database', { skip: !enabled, timeout: 120_000 }, async (t) => {
-  const uri = new URL(process.env.MONGODB_URI);
+  const uri = new URL(process.env.MONGO_URI);
   const scratchDatabase = `tkart_image_test_${Date.now().toString(36)}`;
   uri.pathname = `/${scratchDatabase}`;
-  process.env.MONGODB_URI = uri.toString();
+  process.env.MONGO_URI = uri.toString();
   process.env.PEXELS_API_KEY = '';
   process.env.NODE_ENV = 'test';
   configureDnsServers();
@@ -25,7 +25,7 @@ test('product image API creates, preserves, updates, and migrates external image
   let server;
   let baseUrl;
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGO_URI);
     const [{ default: app }] = await Promise.all([import('../app.js')]);
     const admin = await User.create({ name: 'Image Test Admin', email: `image-test-${Date.now()}@example.test`, password: 'ImageTestPassword123!', role: 'admin' });
     const category = await Category.create({ name: 'Audio & Tech' });

@@ -21,7 +21,7 @@ async function seedAdmin() {
     throw new Error('Replace the example admin credentials and use an administrator password of at least 12 characters.');
   }
 
-  const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/tkart_db';
+  const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/tkart_db';
   configureDnsServers();
   await mongoose.connect(uri, { tls: true, tlsAllowInvalidCertificates: false });
   console.log(' Connected to MongoDB:', mongoose.connection.name);

@@ -110,7 +110,7 @@ source code.
 ### If you use local MongoDB instead
 
 Start your local MongoDB server and use the local connection string
-appropriate to your installation in `MONGODB_URI`. For the local
+appropriate to your installation in `MONGO_URI`. For the local
 workflow, use the non-Atlas commands shown later (`seed:admin`,
 `seed:catalog` only if that script is available, and `dev`). The
 supplied project guide explicitly documents the local admin seed and
@@ -130,7 +130,7 @@ Set the following values. Keep any additional settings already present
 in `.env.example`; do not delete them.
 
 ``` env
-MONGODB_URI=your_mongodb_connection_string
+MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=replace_with_a_private_random_secret_at_least_32_characters
 
 ADMIN_NAME=Your Name
@@ -143,7 +143,7 @@ CLIENT_URL=http://localhost:5173
 
 Replace every example value with your own values. In particular:
 
--   `MONGODB_URI`: the connection string from your Atlas cluster.
+-   `MONGO_URI`: the connection string from your Atlas cluster.
 -   `JWT_SECRET`: a private random secret of at least 32 characters.
 -   `ADMIN_NAME`: the administrator's name.
 -   `ADMIN_EMAIL`: the email you will use to log in to the admin
@@ -276,7 +276,7 @@ Check that:
 5.  The database cluster is available.
 
 If Atlas reports an SRV/DNS resolution error, verify the cluster host in
-`MONGODB_URI`. Only if the default resolver fails, configure
+`MONGO_URI`. Only if the default resolver fails, configure
 `NODE_DNS_SERVERS` in `.env` with DNS servers reachable on your network.
 If you receive a certificate verification error on Node 24, use the
 project's `:atlas` commands as directed by the setup guide.
@@ -377,7 +377,7 @@ stored password. Use the password already stored for that admin.
 ## 13. Inspect the database with MongoDB Compass (optional)
 
 1.  Open MongoDB Compass.
-2.  Connect using the same URI configured as `MONGODB_URI`.
+2.  Connect using the same URI configured as `MONGO_URI`.
 3.  Open the `tkart_db` database.
 4.  Inspect the collections after records have been created.
 
@@ -506,7 +506,7 @@ tier from 0 to 90. Historical order-item snapshots are not rewritten.
 
 ### B. Node cannot resolve the Atlas cluster
 
--   Check the hostname in `MONGODB_URI`.
+-   Check the hostname in `MONGO_URI`.
 -   Confirm the URI is copied from the correct Atlas cluster.
 -   If the default DNS resolver fails, configure `NODE_DNS_SERVERS` in
     `.env` with DNS servers reachable on your network.
@@ -561,7 +561,7 @@ you have verified it.
 -   [ ] Current IP allowed in Atlas Network Access.
 -   [ ] MongoDB connection string copied.
 -   [ ] `backend/.env` created from `.env.example`.
--   [ ] `MONGODB_URI`, `JWT_SECRET`, admin details, and `CLIENT_URL`
+-   [ ] `MONGO_URI`, `JWT_SECRET`, admin details, and `CLIENT_URL`
     configured.
 -   [ ] `.env` kept private and out of Git.
 

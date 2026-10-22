@@ -81,17 +81,17 @@ This comprehensive guide covers everything required to set up, connect, and veri
 
 ## 4. Configuring Backend Environment Variables
 
-Open `backend/.env` and update `MONGODB_URI`:
+Open `backend/.env` and update `MONGO_URI`:
 
 ```ini
 # For Cloud Atlas:
-MONGODB_URI=mongodb+srv://tkart_admin:your_secure_password@cluster0.xxxxx.mongodb.net/tkart_db?retryWrites=true&w=majority
+MONGO_URI=mongodb+srv://tkart_admin:your_secure_password@cluster0.xxxxx.mongodb.net/tkart_db?retryWrites=true&w=majority
 
 # Optional only when Node's default resolver cannot resolve Atlas SRV records:
 # NODE_DNS_SERVERS=8.8.8.8,1.1.1.1
 
 # For Local MongoDB:
-# MONGODB_URI=mongodb://127.0.0.1:27017/tkart_db
+# MONGO_URI=mongodb://127.0.0.1:27017/tkart_db
 ```
 
 > **Security Reminder**: Never commit `backend/.env` to Git. The `.gitignore` file already excludes `.env` to prevent credential exposure.

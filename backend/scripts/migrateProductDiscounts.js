@@ -10,9 +10,9 @@ const normalizeDiscount = (value) => {
 };
 
 async function migrateProductDiscounts() {
-  if (!process.env.MONGODB_URI) throw new Error('MONGODB_URI is required');
+  if (!process.env.MONGO_URI) throw new Error('MONGO_URI is required');
   configureDnsServers();
-  await mongoose.connect(process.env.MONGODB_URI);
+  await mongoose.connect(process.env.MONGO_URI);
 
   let updated = 0;
   let unchanged = 0;

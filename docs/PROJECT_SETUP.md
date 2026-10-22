@@ -45,7 +45,7 @@ T-Kart/
 4. Verify variables in `.env`:
    - `PORT=5000`
    - `CLIENT_URL=http://localhost:5173`
-   - `MONGODB_URI=...` (Configured in Phase 2)
+   - `MONGO_URI=...` (Configured in Phase 2)
    - `JWT_SECRET=...` (Use a private value of at least 32 characters; the backend refuses to start without it.)
    - `ADMIN_EMAIL=...` and `ADMIN_PASSWORD=...` (Use your own admin account; the seed script rejects example placeholders and passwords shorter than 12 characters.)
 5. Start development server:

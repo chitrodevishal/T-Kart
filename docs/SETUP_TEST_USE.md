@@ -19,7 +19,7 @@ This guide explains how to configure the database, start T-Kart, use the custome
    Copy-Item backend/.env.example backend/.env
    ```
 
-3. Edit `backend/.env`. Set `MONGODB_URI` to your database connection string, replace the example `JWT_SECRET` with a private random value of at least 32 characters, and set your own `ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (at least 12 characters), and `ADMIN_PHONE`. Keep this file private and out of source control.
+3. Edit `backend/.env`. Set `MONGO_URI` to your database connection string, replace the example `JWT_SECRET` with a private random value of at least 32 characters, and set your own `ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (at least 12 characters), and `ADMIN_PHONE`. Keep this file private and out of source control.
 
    Atlas URI format:
 
@@ -117,7 +117,7 @@ For local MongoDB, use `npm run migrate:product-discounts`. Order item snapshots
 
 ## 6. Inspect data in MongoDB Compass
 
-Connect Compass with the same MongoDB URI used by `MONGODB_URI`, then open the `tkart_db` database. Mongoose creates collections after the first records are written. Common collections are `users`, `categories`, `products`, `carts`, `orders`, and `payments`.
+Connect Compass with the same MongoDB URI used by `MONGO_URI`, then open the `tkart_db` database. Mongoose creates collections after the first records are written. Common collections are `users`, `categories`, `products`, `carts`, `orders`, and `payments`.
 
 ## 7. Test the project
 
@@ -160,7 +160,7 @@ The API reference is in [API_DOCUMENTATION.md](API_DOCUMENTATION.md), and the Mo
 ## Troubleshooting
 
 - **Atlas connection refused / IP not allowed:** add the machine's current IP in Atlas Network Access and retry.
-- **Node cannot resolve the cluster:** check the Atlas host in `MONGODB_URI`; configure `NODE_DNS_SERVERS` only if the default resolver fails.
+- **Node cannot resolve the cluster:** check the Atlas host in `MONGO_URI`; configure `NODE_DNS_SERVERS` only if the default resolver fails.
 - **Invalid admin credentials:** confirm you are using the seeded admin email and its existing password. The admin seed does not set a default password.
 - **No products found:** seed the sample catalogue or run the optional DummyJSON import, then refresh the storefront.
 - **Frontend cannot reach the API:** verify backend health at `/api/health`, check `CLIENT_URL`, and ensure ports 5000 and 5173 are available.

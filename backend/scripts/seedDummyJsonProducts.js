@@ -29,8 +29,8 @@ async function seedDummyJsonProducts() {
     return;
   }
 
-  if (!process.env.MONGODB_URI) throw new Error('MONGODB_URI is required');
-  await mongoose.connect(process.env.MONGODB_URI);
+  if (!process.env.MONGO_URI) throw new Error('MONGO_URI is required');
+  await mongoose.connect(process.env.MONGO_URI);
   const result = await importDummyJsonProducts(products);
   console.log(
     `DummyJSON import complete: ${result.imported} imported, ${result.skipped} already present, ` +

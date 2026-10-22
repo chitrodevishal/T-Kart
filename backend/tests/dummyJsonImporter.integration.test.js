@@ -7,18 +7,18 @@ import Category from '../models/Category.js';
 import Product from '../models/Product.js';
 import { importDummyJsonProducts } from '../services/dummyJsonImporter.js';
 
-const enabled = process.env.RUN_DUMMYJSON_IMPORT_INTEGRATION === 'true' && Boolean(process.env.MONGODB_URI);
+const enabled = process.env.RUN_DUMMYJSON_IMPORT_INTEGRATION === 'true' && Boolean(process.env.MONGO_URI);
 
 test('imports DummyJSON products into MongoDB with unique images and no duplicates on rerun', {
   skip: !enabled,
   timeout: 120_000,
 }, async () => {
-  const uri = new URL(process.env.MONGODB_URI);
+  const uri = new URL(process.env.MONGO_URI);
   uri.pathname = `/tkart_dummyjson_test_${Date.now().toString(36)}`;
-  process.env.MONGODB_URI = uri.toString();
+  process.env.MONGO_URI = uri.toString();
   configureDnsServers();
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGO_URI);
     const sharedImage = 'https://cdn.dummyjson.com/integration/shared.webp';
     const alternateImage = 'https://cdn.dummyjson.com/integration/hat.webp';
     const category = await Category.create({ name: 'Accessories' });

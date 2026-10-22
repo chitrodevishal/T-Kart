@@ -2,10 +2,13 @@ import mongoose from 'mongoose';
 
 /**
  * Connect to MongoDB database via Mongoose
- * Reads MONGODB_URI from environment variables
+ * Reads MONGO_URI from environment variables
  */
 export const connectDB = async () => {
-  const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/tkart_db';
+  const uri = process.env.MONGO_URI;
+  if (!uri) {
+    throw new Error('MONGO_URI must be configured before connecting to MongoDB.');
+  }
 
   try {
     const conn = await mongoose.connect(uri, {

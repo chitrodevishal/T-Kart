@@ -140,7 +140,7 @@ PORT=5000
 CLIENT_URL=http://localhost:5173
 
 # Your connection string from Part 1.6
-MONGODB_URI=mongodb+srv://tkart_admin:YOUR_PASSWORD@cluster0.xxxxx.mongodb.net/tkart_db?retryWrites=true&w=majority
+MONGO_URI=mongodb+srv://tkart_admin:YOUR_PASSWORD@cluster0.xxxxx.mongodb.net/tkart_db?retryWrites=true&w=majority
 
 # A private random value, at least 32 characters. The backend will not start without it.
 JWT_SECRET=replace_this_with_a_long_random_private_value_32plus_chars
@@ -286,7 +286,7 @@ You should see `"success": true` and `"status": "connected"` for the database.
 ## Part 6: See your data in MongoDB Compass (optional)
 
 1. Open Compass and click **New Connection**.
-2. Paste the same URI you used for `MONGODB_URI`.
+2. Paste the same URI you used for `MONGO_URI`.
 3. Click **Connect** and open the `tkart_db` database.
 
 You should see these collections once data exists:

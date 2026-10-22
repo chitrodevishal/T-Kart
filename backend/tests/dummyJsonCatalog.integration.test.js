@@ -7,7 +7,7 @@ import mongoose from 'mongoose';
 import User from '../models/User.js';
 import { generateToken } from '../utils/jwt.js';
 
-const enabled = process.env.RUN_DUMMYJSON_CATALOG_INTEGRATION === 'true' && Boolean(process.env.MONGODB_URI);
+const enabled = process.env.RUN_DUMMYJSON_CATALOG_INTEGRATION === 'true' && Boolean(process.env.MONGO_URI);
 const products = [
   {
     id: 1,
@@ -38,9 +38,9 @@ const products = [
 ];
 
 test('DummyJSON catalog maps all products and keeps cart and order product IDs usable', { skip: !enabled, timeout: 120_000 }, async () => {
-  const uri = new URL(process.env.MONGODB_URI);
+  const uri = new URL(process.env.MONGO_URI);
   uri.pathname = `/tkart_dummyjson_test_${Date.now().toString(36)}`;
-  process.env.MONGODB_URI = uri.toString();
+  process.env.MONGO_URI = uri.toString();
   process.env.NODE_ENV = 'test';
 
   let apiServer;
@@ -69,7 +69,7 @@ test('DummyJSON catalog maps all products and keeps cart and order product IDs u
     await once(apiServer, 'listening');
     process.env.DUMMYJSON_API_BASE_URL = `http://127.0.0.1:${apiServer.address().port}`;
 
-    await mongoose.connect(process.env.MONGODB_URI, { autoIndex: true });
+    await mongoose.connect(process.env.MONGO_URI, { autoIndex: true });
     databaseName = mongoose.connection.name;
     const [{ default: app }] = await Promise.all([import('../app.js')]);
     await mongoose.model('Product').init();

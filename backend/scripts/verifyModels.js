@@ -8,7 +8,7 @@ import { configureDnsServers } from '../config/dns.js';
 import { User, Category, Product, Cart, Order, Payment } from '../models/index.js';
 
 async function runModelVerification() {
-  const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/tkart_db';
+  const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/tkart_db';
   const suffix = randomUUID().replaceAll('-', '');
   const categoryName = `Model Check ${suffix.slice(0, 8)}`;
   const records = { payment: null, order: null, cart: null, product: null, category: null, user: null };

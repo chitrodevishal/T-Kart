@@ -237,9 +237,9 @@ const expandedCatalog = catalog.map((entry, categoryIndex) => {
 });
 
 async function seedCatalog() {
-  if (!process.env.MONGODB_URI) throw new Error('MONGODB_URI is required');
+  if (!process.env.MONGO_URI) throw new Error('MONGO_URI is required');
   configureDnsServers();
-  await mongoose.connect(process.env.MONGODB_URI);
+  await mongoose.connect(process.env.MONGO_URI);
 
   let categoryCount = 0;
   let productCount = 0;

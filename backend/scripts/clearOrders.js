@@ -10,10 +10,10 @@ async function clearOrders() {
   if (!process.argv.includes(confirmation)) {
     throw new Error(`Refusing to delete orders without ${confirmation}`);
   }
-  if (!process.env.MONGODB_URI) throw new Error('MONGODB_URI is required');
+  if (!process.env.MONGO_URI) throw new Error('MONGO_URI is required');
 
   configureDnsServers();
-  await mongoose.connect(process.env.MONGODB_URI);
+  await mongoose.connect(process.env.MONGO_URI);
   if (mongoose.connection.name !== 'tkart_db') {
     throw new Error(`Refusing to clear orders from unexpected database: ${mongoose.connection.name}`);
   }
